@@ -4,26 +4,29 @@ import useSound from 'use-sound';
 import config from '../../../config';
 import LatestMessagesContext from '../../../contexts/LatestMessages/LatestMessages';
 import INITIAL_BOTTY_MESSAGE from '../../../common/constants/initialBottyMessage';
-import TypingMessage from './TypingMessage';
 import Header from './Header';
 import Footer from './Footer';
 import Message from './Message';
+import TypingMessage from './TypingMessage';
 import '../styles/_messages.scss';
 
 const ME = 'me';
 const BOT = 'bot';
-const INITIAL_MESSAGE = {
-  message: INITIAL_BOTTY_MESSAGE,
-  id: Date.now(),
-  user: BOT
-};
 
 const socket = io(
   config.BOT_SERVER_ENDPOINT,
   { transports: ['websocket', 'polling', 'flashsocket'] }
 );
 
-function scrollToBottomOfMessages() {
+
+const INITIAL_MESSAGE = {
+  message: INITIAL_BOTTY_MESSAGE,
+  id: Date.now(),
+  user: BOT
+};
+
+
+function scrollToBottom() {
   const list = document.getElementById('message-list');
 
   list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
@@ -48,7 +51,7 @@ function Messages() {
 
       playReceive();
 
-      scrollToBottomOfMessages();
+      scrollToBottom();
     });
 
   }, [messages]);
@@ -59,7 +62,7 @@ function Messages() {
     socket.on('bot-typing', () => {
       setBotTyping(true);
 
-      scrollToBottomOfMessages();
+      scrollToBottom();
     });
   }, []);
 
@@ -70,7 +73,7 @@ function Messages() {
 
     playSend();
 
-    scrollToBottomOfMessages();
+    scrollToBottom();
 
     socket.emit('user-message', message);
 
